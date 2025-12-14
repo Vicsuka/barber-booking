@@ -102,25 +102,6 @@ class DataService {
     }
     return false;
   }
-
-  /**
-   * Update booking status
-   */
-  updateBookingStatus(
-    id: string,
-    status: 'confirmed' | 'cancelled',
-  ): Booking | null {
-    const bookings = this.readBookings();
-    const booking = bookings.find((b) => b.id === id);
-
-    if (booking) {
-      booking.status = status;
-      this.writeBookings(bookings);
-      console.log(`📝 Updated booking ${id} status to: ${status}`);
-      return booking;
-    }
-    return null;
-  }
 }
 
 export const dataService = new DataService();

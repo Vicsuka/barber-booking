@@ -136,32 +136,6 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 /**
- * PATCH /api/bookings/:id/cancel
- * Cancel a booking
- */
-router.patch('/:id/cancel', async (req: Request, res: Response) => {
-  try {
-    console.log('📍 PATCH /api/bookings/:id/cancel called');
-    const { id } = req.params;
-
-    const result = bookingService.cancelBooking(id);
-
-    if (result.success) {
-      res.json(result);
-    } else {
-      res.status(404).json(result);
-    }
-  } catch (error: any) {
-    console.error('Error in PATCH /api/bookings/:id/cancel:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      message: error.message,
-    });
-  }
-});
-
-/**
  * DELETE /api/bookings/:id
  * Delete a booking permanently
  */

@@ -37,7 +37,6 @@ class BookingService {
         request.barberId,
       );
       const hasConflict = existingBookings.some((booking) => {
-        if (booking.status === 'cancelled') return false;
         return booking.dateTime === request.dateTime;
       });
 
@@ -55,7 +54,6 @@ class BookingService {
         customerEmail: request.customerEmail.toLowerCase(),
         dateTime: request.dateTime,
         createdAt: new Date().toISOString(),
-        status: 'confirmed',
       };
 
       const savedBooking = dataService.createBooking(booking);
@@ -124,34 +122,6 @@ class BookingService {
   }
 
   /**
-   * Cancel a booking
-   */
-  cancelBooking(id: string): ApiResponse<Booking | null> {
-    try {
-      const booking = dataService.updateBookingStatus(id, 'cancelled');
-
-      if (booking) {
-        return {
-          success: true,
-          data: booking,
-          message: 'Booking cancelled successfully',
-        };
-      } else {
-        return {
-          success: false,
-          error: 'Booking not found',
-        };
-      }
-    } catch (error: any) {
-      return {
-        success: false,
-        error: 'Failed to cancel booking',
-        message: error.message,
-      };
-    }
-  }
-
-  /**
    * Delete a booking permanently
    */
   deleteBooking(id: string): ApiResponse<null> {
@@ -192,7 +162,6 @@ class BookingService {
       const targetDate = dateObj.toISOString().split('T')[0];
 
       const filteredBookings = barberBookings.filter((booking) => {
-        if (booking.status === 'cancelled') return false;
         const bookingDate = new Date(booking.dateTime)
           .toISOString()
           .split('T')[0];
