@@ -80,12 +80,12 @@ export const BarberSelection: React.FC<BarberSelectionProps> = ({
     return (
       <Center py={8}>
         <VStack gap={4} textAlign='center'>
-          <Alert.Root status='error' borderRadius='md' maxW='md'>
+          <Alert status='error' borderRadius='md' maxW='md'>
             <AlertTriangle size={20} color='red' />
             <AlertDescription fontSize={{ base: 'sm', md: 'md' }}>
               {error}
             </AlertDescription>
-          </Alert.Root>
+          </Alert>
           <Button
             onClick={loadBarbers}
             bg={isDarkMode ? 'blue.600' : 'blue.500'}
@@ -162,4 +162,3 @@ export const BarberSelection: React.FC<BarberSelectionProps> = ({
     </Box>
   );
 };
-
