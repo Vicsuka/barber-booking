@@ -13,16 +13,19 @@ const PORT = process.env.PORT || 3001;
 
 // CORS configuration
 const corsOptions = {
-  origin: '*',
+  origin: true, // Reflect request origin
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'X-API-Key', 'Authorization'],
   credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
 };
 
 // Middleware
 app.use(
   helmet({
     crossOriginResourcePolicy: false, // Disable for API
+    contentSecurityPolicy: false,
   }),
 );
 app.use(cors(corsOptions));
