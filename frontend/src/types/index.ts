@@ -27,3 +27,18 @@ export interface ApiResponse<T> {
   error?: string;
   message?: string;
 }
+
+export interface Booking {
+  id: string;
+  barberId: string;
+  customerEmail: string;
+  dateTime: string; // ISO string
+  createdAt: string;
+  status: 'confirmed' | 'cancelled';
+}
+
+export interface TimeSlot {
+  time: string; // HH:MM format
+  available: boolean;
+  dateTime: string; // Full ISO string
+}
