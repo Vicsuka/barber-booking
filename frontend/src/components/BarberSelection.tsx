@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Heading,
+  SimpleGrid,
+  Spinner,
+  Alert,
+  AlertDescription,
+  Button,
+  VStack,
+  Center,
+} from '@chakra-ui/react';
+import { AlertTriangle, CheckCircle } from 'lucide-react';
 import { apiService } from '../services/api';
 import { BarberCard } from './BarberCard';
+import { useDarkMode } from '../contexts/DarkModeContext';
 import type { Barber } from '../types';
 
 interface BarberSelectionProps {
@@ -12,6 +25,7 @@ export const BarberSelection: React.FC<BarberSelectionProps> = ({
   onBarberSelect,
   selectedBarber,
 }) => {
+  const { isDarkMode } = useDarkMode();
   const [barbers, setBarbers] = useState<Barber[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,57 +63,72 @@ export const BarberSelection: React.FC<BarberSelectionProps> = ({
 
   if (loading) {
     return (
-      <div className='text-center py-8'>
-        <div className='inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
-        <p className='mt-2 text-gray-600'>Loading barbers...</p>
-      </div>
+      <Center py={8}>
+        <VStack gap={4}>
+          <Spinner size='xl' color='blue.500' />
+          <Box textAlign='center' color='gray.600'>
+            Loading barbers...
+          </Box>
+        </VStack>
+      </Center>
     );
   }
 
   if (error) {
     return (
-      <div className='text-center py-8'>
-        <div className='text-red-600 mb-4'>
-          <svg
-            className='mx-auto h-12 w-12 mb-2'
-            fill='none'
-            viewBox='0 0 24 24'
-            stroke='currentColor'
+      <Center py={8}>
+        <VStack gap={4} textAlign='center'>
+          <Alert.Root status='error' borderRadius='md' maxW='md'>
+            <AlertTriangle size={20} color='red' />
+            <AlertDescription fontSize={{ base: 'sm', md: 'md' }}>
+              {error}
+            </AlertDescription>
+          </Alert.Root>
+          <Button
+            onClick={loadBarbers}
+            bg={isDarkMode ? 'blue.600' : 'blue.500'}
+            color='white'
+            _hover={{ bg: isDarkMode ? 'blue.500' : 'blue.600' }}
+            size={{ base: 'md', md: 'lg' }}
           >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z'
-            />
-          </svg>
-          <p className='text-sm'>{error}</p>
-        </div>
-        <button
-          onClick={loadBarbers}
-          className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors'
-        >
-          Try Again
-        </button>
-      </div>
+            Try Again
+          </Button>
+        </VStack>
+      </Center>
     );
   }
 
   if (barbers.length === 0) {
     return (
-      <div className='text-center py-8 text-gray-500'>
-        <p>No barbers available at the moment.</p>
-      </div>
+      <Center py={8}>
+        <Box
+          textAlign='center'
+          color='gray.500'
+          fontSize={{ base: 'md', md: 'lg' }}
+        >
+          No barbers available at the moment.
+        </Box>
+      </Center>
     );
   }
 
   return (
-    <div>
-      <h2 className='text-xl font-semibold text-gray-800 mb-4'>
+    <Box>
+      <Heading
+        as='h2'
+        size={{ base: 'md', md: 'lg' }}
+        color='gray.800'
+        mb={6}
+        textAlign={{ base: 'center', md: 'left' }}
+      >
         Choose Your Barber ({barbers.length} available)
-      </h2>
+      </Heading>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+      <SimpleGrid
+        columns={{ base: 1, md: 2, lg: 3 }}
+        gap={{ base: 4, md: 6 }}
+        w='full'
+      >
         {barbers.map((barber) => (
           <BarberCard
             key={barber.id}
@@ -108,15 +137,26 @@ export const BarberSelection: React.FC<BarberSelectionProps> = ({
             isSelected={selectedBarber?.id === barber.id}
           />
         ))}
-      </div>
+      </SimpleGrid>
 
       {selectedBarber && (
-        <div className='mt-6 p-4 bg-green-50 border border-green-200 rounded-md'>
-          <p className='text-green-800'>
-            ✓ Selected: <strong>{selectedBarber.name}</strong>
-          </p>
-        </div>
+        <Box
+          mt={6}
+          p={4}
+          bg='green.50'
+          border='1px'
+          borderColor='green.200'
+          borderRadius='md'
+        >
+          <Box color='green.800'>
+            <CheckCircle
+              size={16}
+              style={{ display: 'inline', marginRight: '8px' }}
+            />
+            Selected: <Box as='strong'>{selectedBarber.name}</Box>
+          </Box>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };

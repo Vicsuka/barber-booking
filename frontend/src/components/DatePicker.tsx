@@ -1,4 +1,15 @@
 import React from 'react';
+import {
+  Heading,
+  SimpleGrid,
+  Button,
+  VStack,
+  Text,
+  Box,
+  HStack,
+} from '@chakra-ui/react';
+import { CheckCircle } from 'lucide-react';
+import { useDarkMode } from '../contexts/DarkModeContext';
 
 interface DatePickerProps {
   selectedDate: Date | null;
@@ -9,6 +20,14 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   selectedDate,
   onDateSelect,
 }) => {
+  const { isDarkMode } = useDarkMode();
+  // Define color variables
+  const selectedBg = isDarkMode ? 'blue.700' : 'blue.50';
+  const defaultBg = isDarkMode ? 'gray.700' : 'white';
+  const selectedBorder = isDarkMode ? 'blue.400' : 'blue.500';
+  const defaultBorder = isDarkMode ? 'gray.600' : 'gray.200';
+  const hoverBg = isDarkMode ? 'gray.600' : 'gray.50';
+
   // Generate next 14 days (2 weeks)
   const generateDates = () => {
     const dates = [];
@@ -36,48 +55,121 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   };
 
   return (
-    <div className='mb-6'>
-      <h3 className='text-lg font-medium text-gray-800 mb-4'>Select a Date</h3>
+    <VStack gap={6} align='stretch'>
+      <Heading
+        as='h3'
+        size={{ base: 'md', md: 'lg' }}
+        color={isDarkMode ? 'gray.200' : 'gray.800'}
+        textAlign={{ base: 'center', md: 'left' }}
+      >
+        Select a Date
+      </Heading>
 
-      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-2'>
+      <SimpleGrid columns={{ base: 2, sm: 3, md: 7 }} gap={{ base: 2, md: 3 }}>
         {dates.map((date, index) => (
-          <button
+          <Button
             key={index}
             onClick={() => onDateSelect(date)}
-            className={`
-              p-3 rounded-md text-sm font-medium transition-all duration-200 border
-              ${
-                isSameDate(selectedDate, date)
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-              }
-              ${isToday(date) ? 'ring-2 ring-blue-200' : ''}
-            `}
+            variant='outline'
+            bg={
+              isSameDate(selectedDate, date)
+                ? isDarkMode
+                  ? 'blue.800'
+                  : selectedBg
+                : isDarkMode
+                ? 'gray.700'
+                : defaultBg
+            }
+            borderColor={
+              isSameDate(selectedDate, date)
+                ? selectedBorder
+                : isDarkMode
+                ? 'gray.600'
+                : defaultBorder
+            }
+            color={
+              isSameDate(selectedDate, date)
+                ? isDarkMode
+                  ? 'blue.300'
+                  : 'blue.700'
+                : isDarkMode
+                ? 'gray.300'
+                : 'gray.700'
+            }
+            _hover={{
+              bg: isSameDate(selectedDate, date) ? selectedBg : hoverBg,
+              borderColor: isSameDate(selectedDate, date)
+                ? selectedBorder
+                : isDarkMode
+                ? 'gray.500'
+                : 'gray.300',
+            }}
+            h={{ base: '16', md: '20' }}
+            p={3}
+            position='relative'
+            overflow='visible'
+            boxShadow={
+              isToday(date) ? '0 0 0 2px var(--chakra-colors-blue-200)' : 'none'
+            }
           >
-            <div className='text-xs text-gray-500 mb-1'>
-              {date.toLocaleDateString('en-US', { weekday: 'short' })}
-            </div>
-            <div>{date.getDate()}</div>
-            {isToday(date) && (
-              <div className='text-xs text-blue-600 mt-1'>Today</div>
-            )}
-          </button>
+            <VStack gap={1}>
+              <Text fontSize='xs' color={isDarkMode ? 'gray.400' : 'gray.500'}>
+                {date.toLocaleDateString('en-US', { weekday: 'short' })}
+              </Text>
+              <Text
+                fontSize={{ base: 'sm', md: 'md' }}
+                fontWeight='medium'
+                color={
+                  isSameDate(selectedDate, date)
+                    ? isDarkMode
+                      ? 'blue.300'
+                      : 'blue.700'
+                    : isDarkMode
+                    ? 'gray.200'
+                    : 'gray.700'
+                }
+              >
+                {date.getDate()}
+              </Text>
+              {isToday(date) && (
+                <Text
+                  fontSize='xs'
+                  color={isDarkMode ? 'blue.300' : 'blue.600'}
+                  fontWeight='bold'
+                >
+                  Today
+                </Text>
+              )}
+            </VStack>
+          </Button>
         ))}
-      </div>
+      </SimpleGrid>
 
       {selectedDate && (
-        <div className='mt-4 p-3 bg-green-50 border border-green-200 rounded-md'>
-          <p className='text-green-800 text-sm'>
-            ✓ Selected:{' '}
-            {selectedDate.toLocaleDateString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </p>
-        </div>
+        <Box
+          bg={isDarkMode ? 'green.900' : 'green.50'}
+          p={4}
+          borderRadius='md'
+          border='1px'
+          borderColor={isDarkMode ? 'green.700' : 'green.200'}
+        >
+          <HStack gap={2}>
+            <CheckCircle color={isDarkMode ? '#68D391' : 'green'} size={20} />
+            <Text
+              fontSize={{ base: 'sm', md: 'md' }}
+              color={isDarkMode ? 'green.200' : 'green.800'}
+            >
+              Selected:{' '}
+              {selectedDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </Text>
+          </HStack>
+        </Box>
       )}
-    </div>
+    </VStack>
   );
 };

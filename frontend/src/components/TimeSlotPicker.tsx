@@ -1,5 +1,18 @@
-import React from 'react';
-import type { Barber, TimeSlot } from '../types';
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Heading,
+  SimpleGrid,
+  Button,
+  VStack,
+  Text,
+  Center,
+  HStack,
+} from '@chakra-ui/react';
+import { CheckCircle } from 'lucide-react';
+import { useDarkMode } from '../contexts/DarkModeContext';
+import { apiService } from '../services/api';
+import type { Barber, TimeSlot, Booking } from '../types';
 
 interface TimeSlotPickerProps {
   selectedDate: Date | null;
@@ -14,6 +27,43 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
   selectedTimeSlot,
   onTimeSlotSelect,
 }) => {
+  const { isDarkMode } = useDarkMode();
+  const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
+  const [isLoadingBookings, setIsLoadingBookings] = useState(false);
+
+  // Fetch existing bookings when barber or date changes
+  useEffect(() => {
+    const fetchExistingBookings = async () => {
+      if (!selectedDate || !selectedBarber) {
+        setExistingBookings([]);
+        return;
+      }
+
+      setIsLoadingBookings(true);
+      try {
+        const dateString = selectedDate.toISOString().split('T')[0];
+        const result = await apiService.getBookingsByBarberAndDate(
+          selectedBarber.id,
+          dateString,
+        );
+
+        if (result.success && result.data) {
+          setExistingBookings(result.data);
+        } else {
+          console.error('Failed to fetch bookings:', result.error);
+          setExistingBookings([]);
+        }
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+        setExistingBookings([]);
+      } finally {
+        setIsLoadingBookings(false);
+      }
+    };
+
+    fetchExistingBookings();
+  }, [selectedDate, selectedBarber]);
+
   // Generate time slots based on barber's schedule
   const generateTimeSlots = (): TimeSlot[] => {
     if (!selectedDate || !selectedBarber) return [];
@@ -46,9 +96,15 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
       const dateTime = new Date(selectedDate);
       dateTime.setHours(hour, minute, 0, 0);
 
+      // Check if this time slot is already booked
+      const isBooked = existingBookings.some((booking) => {
+        const bookingDateTime = new Date(booking.dateTime);
+        return bookingDateTime.getTime() === dateTime.getTime();
+      });
+
       slots.push({
         time: timeString,
-        available: true, // TODO: Check against existing bookings
+        available: !isBooked,
         dateTime: dateTime.toISOString(),
       });
     }
@@ -70,25 +126,55 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
     });
   };
 
+  const selectedBg = isDarkMode ? 'blue.700' : 'blue.50';
+  const selectedBorder = isDarkMode ? 'blue.400' : 'blue.500';
+  const defaultBg = isDarkMode ? 'gray.700' : 'white';
+  const defaultBorder = isDarkMode ? 'gray.600' : 'gray.200';
+  const disabledBg = isDarkMode ? 'gray.800' : 'gray.50';
+
   if (!selectedDate) {
     return (
-      <div className='mb-6'>
-        <h3 className='text-lg font-medium text-gray-800 mb-4'>Select Time</h3>
-        <p className='text-gray-500 text-center py-8'>
-          Please select a date first
-        </p>
-      </div>
+      <VStack gap={4} align='stretch'>
+        <Heading
+          as='h3'
+          size={{ base: 'md', md: 'lg' }}
+          color={isDarkMode ? 'gray.100' : 'gray.800'}
+          textAlign={{ base: 'center', md: 'left' }}
+        >
+          Select Time
+        </Heading>
+        <Center py={8}>
+          <Text
+            color={isDarkMode ? 'gray.400' : 'gray.500'}
+            fontSize={{ base: 'md', md: 'lg' }}
+          >
+            Please select a date first
+          </Text>
+        </Center>
+      </VStack>
     );
   }
 
   if (!selectedBarber) {
     return (
-      <div className='mb-6'>
-        <h3 className='text-lg font-medium text-gray-800 mb-4'>Select Time</h3>
-        <p className='text-gray-500 text-center py-8'>
-          Please select a barber first
-        </p>
-      </div>
+      <VStack gap={4} align='stretch'>
+        <Heading
+          as='h3'
+          size={{ base: 'md', md: 'lg' }}
+          color={isDarkMode ? 'gray.100' : 'gray.800'}
+          textAlign={{ base: 'center', md: 'left' }}
+        >
+          Select Time
+        </Heading>
+        <Center py={8}>
+          <Text
+            color={isDarkMode ? 'gray.400' : 'gray.500'}
+            fontSize={{ base: 'md', md: 'lg' }}
+          >
+            Please select a barber first
+          </Text>
+        </Center>
+      </VStack>
     );
   }
 
@@ -97,60 +183,156 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({
       weekday: 'long',
     });
     return (
-      <div className='mb-6'>
-        <h3 className='text-lg font-medium text-gray-800 mb-4'>Select Time</h3>
-        <div className='text-center py-8'>
-          <p className='text-gray-500'>
-            {selectedBarber.name} is not available on {dayName}s
-          </p>
-          <p className='text-sm text-gray-400 mt-2'>
-            Please select a different date
-          </p>
-        </div>
-      </div>
+      <VStack gap={4} align='stretch'>
+        <Heading
+          as='h3'
+          size={{ base: 'md', md: 'lg' }}
+          color={isDarkMode ? 'gray.100' : 'gray.800'}
+          textAlign={{ base: 'center', md: 'left' }}
+        >
+          Select Time
+        </Heading>
+        <Center py={8}>
+          <VStack gap={2}>
+            <Text
+              color={isDarkMode ? 'gray.400' : 'gray.500'}
+              fontSize={{ base: 'md', md: 'lg' }}
+              textAlign='center'
+            >
+              {selectedBarber.name} is not available on {dayName}s
+            </Text>
+            <Text
+              fontSize='sm'
+              color={isDarkMode ? 'gray.500' : 'gray.400'}
+              textAlign='center'
+            >
+              Please select a different date
+            </Text>
+          </VStack>
+        </Center>
+      </VStack>
     );
   }
 
   return (
-    <div className='mb-6'>
-      <h3 className='text-lg font-medium text-gray-800 mb-4'>
+    <VStack gap={6} align='stretch'>
+      <Heading
+        as='h3'
+        size={{ base: 'md', md: 'lg' }}
+        color={isDarkMode ? 'gray.100' : 'gray.800'}
+        textAlign={{ base: 'center', md: 'left' }}
+      >
         Select Time for {selectedBarber.name}
-      </h3>
+      </Heading>
 
-      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2'>
-        {timeSlots.map((slot, index) => (
-          <button
-            key={index}
-            onClick={() => onTimeSlotSelect(slot)}
-            disabled={!slot.available}
-            className={`
-              p-3 rounded-md text-sm font-medium transition-all duration-200 border
-              ${
-                selectedTimeSlot?.time === slot.time
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : slot.available
-                  ? 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-                  : 'border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed'
-              }
-            `}
+      {isLoadingBookings ? (
+        <Center py={8}>
+          <Text
+            color={isDarkMode ? 'gray.400' : 'gray.500'}
+            fontSize={{ base: 'md', md: 'lg' }}
           >
-            {formatTime(slot.time)}
-          </button>
-        ))}
-      </div>
+            Loading available times...
+          </Text>
+        </Center>
+      ) : (
+        <SimpleGrid
+          columns={{ base: 2, sm: 3, md: 4, lg: 6 }}
+          gap={{ base: 2, md: 3 }}
+        >
+          {timeSlots.map((slot, index) => (
+            <Button
+              key={index}
+              onClick={() => onTimeSlotSelect(slot)}
+              disabled={!slot.available}
+              variant='outline'
+              bg={
+                selectedTimeSlot?.time === slot.time
+                  ? selectedBg
+                  : slot.available
+                  ? defaultBg
+                  : disabledBg
+              }
+              borderColor={
+                selectedTimeSlot?.time === slot.time
+                  ? selectedBorder
+                  : slot.available
+                  ? defaultBorder
+                  : isDarkMode
+                  ? 'gray.700'
+                  : 'gray.200'
+              }
+              color={
+                selectedTimeSlot?.time === slot.time
+                  ? isDarkMode
+                    ? 'blue.100'
+                    : 'blue.700'
+                  : slot.available
+                  ? isDarkMode
+                    ? 'gray.100'
+                    : 'gray.700'
+                  : isDarkMode
+                  ? 'gray.500'
+                  : 'gray.400'
+              }
+              _hover={
+                slot.available
+                  ? {
+                      bg:
+                        selectedTimeSlot?.time === slot.time
+                          ? selectedBg
+                          : isDarkMode
+                          ? 'gray.600'
+                          : 'gray.50',
+                      borderColor:
+                        selectedTimeSlot?.time === slot.time
+                          ? selectedBorder
+                          : isDarkMode
+                          ? 'gray.500'
+                          : 'gray.300',
+                    }
+                  : {}
+              }
+              size={{ base: 'sm', md: 'md' }}
+              h={{ base: '10', md: '12' }}
+              title={
+                !slot.available ? 'This time slot is already booked' : undefined
+              }
+            >
+              {formatTime(slot.time)}
+              {!slot.available && (
+                <Text fontSize='xs' opacity={0.7} ml={1}>
+                  (Booked)
+                </Text>
+              )}
+            </Button>
+          ))}
+        </SimpleGrid>
+      )}
 
       {selectedTimeSlot && (
-        <div className='mt-4 p-3 bg-green-50 border border-green-200 rounded-md'>
-          <p className='text-green-800 text-sm'>
-            ✓ Selected: {formatTime(selectedTimeSlot.time)} on{' '}
-            {selectedDate.toLocaleDateString('en-US', {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </p>
-        </div>
+        <Box
+          bg={isDarkMode ? 'green.900' : 'green.50'}
+          p={4}
+          borderRadius='md'
+          border='1px'
+          borderColor={isDarkMode ? 'green.700' : 'green.200'}
+        >
+          <HStack gap={2}>
+            <CheckCircle color={isDarkMode ? '#68D391' : 'green'} size={20} />
+            <Text
+              fontSize={{ base: 'sm', md: 'md' }}
+              color={isDarkMode ? 'green.200' : 'green.800'}
+            >
+              Selected: {formatTime(selectedTimeSlot.time)} on{' '}
+              {selectedDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </Text>
+          </HStack>
+        </Box>
       )}
-    </div>
+    </VStack>
   );
 };

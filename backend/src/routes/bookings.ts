@@ -49,26 +49,49 @@ router.post('/', async (req: Request, res: Response) => {
 /**
  * GET /api/bookings?email=customer@example.com
  * Get bookings by customer email
+ *
+ * GET /api/bookings?barberId=123&date=2025-12-14
+ * Get bookings by barber ID and date
  */
 router.get('/', async (req: Request, res: Response) => {
   try {
     console.log('📍 GET /api/bookings called');
-    const { email } = req.query;
+    const { email, barberId, date } = req.query;
 
-    if (!email || typeof email !== 'string') {
-      return res.status(400).json({
-        success: false,
-        error: 'Email query parameter is required',
-      });
+    if (barberId && date) {
+      if (typeof barberId !== 'string' || typeof date !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: 'barberId and date must be valid strings',
+        });
+      }
+
+      const result = bookingService.getBookingsByBarberAndDate(barberId, date);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(400).json(result);
+      }
+      return;
     }
 
-    const result = bookingService.getBookingsByEmail(email);
+    if (email && typeof email === 'string') {
+      const result = bookingService.getBookingsByEmail(email);
 
-    if (result.success) {
-      res.json(result);
-    } else {
-      res.status(400).json(result);
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(400).json(result);
+      }
+      return;
     }
+
+    return res.status(400).json({
+      success: false,
+      error:
+        'Either email or (barberId and date) query parameters are required',
+    });
   } catch (error: any) {
     console.error('Error in GET /api/bookings:', error);
     res.status(500).json({

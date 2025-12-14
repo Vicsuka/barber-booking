@@ -180,6 +180,40 @@ class BookingService {
   }
 
   /**
+   * Get bookings for a specific barber on a specific date
+   */
+  getBookingsByBarberAndDate(
+    barberId: string,
+    date: string,
+  ): ApiResponse<Booking[]> {
+    try {
+      const barberBookings = dataService.getBookingsByBarberId(barberId);
+      const dateObj = new Date(date);
+      const targetDate = dateObj.toISOString().split('T')[0];
+
+      const filteredBookings = barberBookings.filter((booking) => {
+        if (booking.status === 'cancelled') return false;
+        const bookingDate = new Date(booking.dateTime)
+          .toISOString()
+          .split('T')[0];
+        return bookingDate === targetDate;
+      });
+
+      return {
+        success: true,
+        data: filteredBookings,
+        message: `Found ${filteredBookings.length} bookings for barber ${barberId} on ${targetDate}`,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: 'Failed to fetch bookings for barber and date',
+        message: error.message,
+      };
+    }
+  }
+
+  /**
    * Validate email format
    */
   private isValidEmail(email: string): boolean {

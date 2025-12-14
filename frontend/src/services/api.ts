@@ -48,6 +48,17 @@ class ApiService {
       body: JSON.stringify(bookingData),
     });
   }
+
+  async getBookingsByBarberAndDate(
+    barberId: string,
+    date: string,
+  ): Promise<ApiResponse<Booking[]>> {
+    const params = new URLSearchParams({
+      barberId,
+      date,
+    });
+    return this.makeRequest<Booking[]>(`/bookings?${params.toString()}`);
+  }
 }
 
 export const apiService = new ApiService();
