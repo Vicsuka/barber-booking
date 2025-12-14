@@ -28,9 +28,6 @@ app.use(
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Handle OPTIONS preflight for all routes
-app.options('*', cors(corsOptions));
-
 app.get('/health', (req, res) => {
   res.json({
     success: true,
