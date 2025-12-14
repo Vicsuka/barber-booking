@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import {
   VStack,
@@ -174,3 +176,4 @@ export const BookingManagement: React.FC = () => {
     </VStack>
   );
 };
+

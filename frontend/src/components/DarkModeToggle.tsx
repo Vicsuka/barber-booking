@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Button } from '@chakra-ui/react';
 import { Moon, Sun } from 'lucide-react';
@@ -27,3 +29,4 @@ export const DarkModeToggle: React.FC = () => {
     </Button>
   );
 };
+

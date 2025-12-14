@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import {
   Box,
@@ -265,3 +267,4 @@ export const BookingSummary: React.FC<BookingSummaryProps> = ({
     </Box>
   );
 };
+

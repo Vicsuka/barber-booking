@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Box, HStack, Text, Button, Spinner, VStack } from '@chakra-ui/react';
 import { useDarkMode } from '../contexts/DarkModeContext';
@@ -136,3 +138,4 @@ export const DeleteBookingModal: React.FC<DeleteBookingModalProps> = ({
     </Box>
   );
 };
+

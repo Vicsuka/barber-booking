@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   Box,
@@ -126,3 +128,4 @@ export const BarberCard: React.FC<BarberCardProps> = ({
     </Box>
   );
 };
+

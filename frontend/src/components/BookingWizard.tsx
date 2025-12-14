@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { VStack, Box } from '@chakra-ui/react';
 import { BarberSelection } from './BarberSelection';
@@ -94,3 +96,4 @@ export const BookingWizard: React.FC = () => {
     </Box>
   );
 };
+

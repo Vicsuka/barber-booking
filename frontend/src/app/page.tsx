@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import {
   Box,
@@ -8,14 +10,14 @@ import {
   HStack,
   Button,
 } from '@chakra-ui/react';
-import { BookingWizard } from './components/BookingWizard';
-import { BookingManagement } from './components/BookingManagement';
-import { DarkModeProvider, useDarkMode } from './contexts/DarkModeContext';
-import { DarkModeToggle } from './components/DarkModeToggle';
+import { BookingWizard } from '@/components/BookingWizard';
+import { BookingManagement } from '@/components/BookingManagement';
+import { useDarkMode } from '@/contexts/DarkModeContext';
+import { DarkModeToggle } from '@/components/DarkModeToggle';
 
 type ActiveTab = 'book' | 'manage';
 
-const AppContent = () => {
+export default function Home() {
   const { isDarkMode } = useDarkMode();
   const [activeTab, setActiveTab] = useState<ActiveTab>('book');
 
@@ -50,7 +52,7 @@ const AppContent = () => {
               >
                 {activeTab === 'book'
                   ? 'Book your appointment with our professional barbers. Choose your preferred barber, date, and time slot.'
-                  : 'Manage your existing appointments. View and cancel your bookings.'}
+                  : 'Manage your existing appointments. View and delete your bookings.'}
               </Text>
             </VStack>
             <DarkModeToggle />
@@ -96,14 +98,4 @@ const AppContent = () => {
       </Container>
     </Box>
   );
-};
-
-function App() {
-  return (
-    <DarkModeProvider>
-      <AppContent />
-    </DarkModeProvider>
-  );
 }
-
-export default App;

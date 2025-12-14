@@ -1,73 +1,136 @@
-# React + TypeScript + Vite
+# Barber Booking System - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Next.js 15 frontend application for the Barber Booking System with a modern, responsive UI.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Next.js 15** - React framework with App Router
+- **React 19** - UI library with latest features
+- **TypeScript** - Type-safe development
+- **Chakra UI v2** - Component library
+- **Lucide React** - Icon library
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Install Dependencies
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+npm run dev
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Open http://localhost:3000 to view the application.
+
+### Production Build
+
+```bash
+npm run build
+npm start
+```
+
+## Environment Variables
+
+Create `.env.local`:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_API_KEY=very-secret-key-for-internal-auth
+```
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── layout.tsx          # Root layout with providers
+│   ├── page.tsx            # Home page
+│   └── globals.css         # Global styles
+├── components/
+│   ├── BookingWizard.tsx   # Multi-step booking form
+│   ├── BookingManagement.tsx
+│   ├── BarberSelection.tsx
+│   ├── DatePicker.tsx
+│   ├── TimeSlotPicker.tsx
+│   └── ...
+├── contexts/
+│   └── DarkModeContext.tsx # Theme management
+├── services/
+│   └── api.ts              # API client
+└── types/
+    └── index.ts            # TypeScript definitions
+```
+
+## Features
+
+- 🎨 Dark/Light mode with persistence
+- 📱 Fully responsive design
+- ♿ Accessible components
+- 🚀 Optimized performance
+- 🔄 Real-time availability updates
+- ✨ Smooth animations
+
+## API Integration
+
+The frontend communicates with the backend API using the `ApiService` class:
+
+```typescript
+// Fetch barbers
+const barbers = await api.getBarbers();
+
+// Create booking
+const booking = await api.createBooking(bookingData);
+
+// Search bookings
+const bookings = await api.searchBookings(email);
+```
+
+All requests include API key authentication via `X-API-Key` header.
+
+## Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Run production server
+- `npm run lint` - Run ESLint
+
+## Docker
+
+The frontend includes a multi-stage Dockerfile for optimized production builds:
+
+```bash
+docker build -t barber-booking-frontend .
+docker run -p 3000:3000 barber-booking-frontend
+```
+
+│ ├── page.tsx # Home page
+│ └── globals.css # Global styles
+├── components/
+│ ├── BarberCard.tsx
+│ ├── BarberSelection.tsx
+│ ├── BookingWizard.tsx
+│ ├── BookingManagement.tsx
+│ ├── DatePicker.tsx
+│ ├── TimeSlotPicker.tsx
+│ └── ...
+├── contexts/
+│ └── DarkModeContext.tsx
+├── services/
+│ └── api.ts
+└── types/
+└── index.ts
+
+```
+
+## Features
+
+- Server-side rendering (SSR)
+- Dark mode support
+- Responsive design
+- Type-safe API calls
+- Component-based architecture
 ```

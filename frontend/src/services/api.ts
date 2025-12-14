@@ -1,8 +1,7 @@
 import type { ApiResponse, Barber, Booking } from '../types';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
-const API_KEY = import.meta.env.VITE_API_KEY || 'secret-key';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY || 'secret-key';
 
 export interface CreateBookingData {
   barberId: string;
@@ -16,7 +15,7 @@ class ApiService {
     options: RequestInit = {},
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}/api${endpoint}`, {
         headers: {
           'Content-Type': 'application/json',
           'X-API-Key': API_KEY,

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Box, HStack, VStack, Text, Button } from '@chakra-ui/react';
 import { Calendar, Clock, User, Trash2 } from 'lucide-react';
@@ -102,3 +104,4 @@ export const BookingListItem: React.FC<BookingListItemProps> = ({
     </Box>
   );
 };
+

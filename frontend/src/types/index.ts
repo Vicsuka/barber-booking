@@ -1,5 +1,3 @@
-// Frontend types matching the backend API structure
-
 export interface DaySchedule {
   start: string;
   end: string;

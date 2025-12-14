@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   Heading,
@@ -173,3 +175,4 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     </VStack>
   );
 };
+

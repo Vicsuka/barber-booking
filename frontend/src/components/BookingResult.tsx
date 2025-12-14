@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   Box,
@@ -168,3 +170,4 @@ export const BookingResult: React.FC<BookingResultProps> = ({
     </Box>
   );
 };
+

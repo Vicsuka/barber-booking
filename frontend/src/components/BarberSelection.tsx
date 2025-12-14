@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -160,3 +162,4 @@ export const BarberSelection: React.FC<BarberSelectionProps> = ({
     </Box>
   );
 };
+
