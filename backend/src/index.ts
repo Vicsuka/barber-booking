@@ -13,7 +13,14 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: '*', // Allow all origins for Vercel deployment
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'X-API-Key', 'Authorization'],
+  }),
+);
 app.use(express.json());
 
 app.get('/health', (req, res) => {

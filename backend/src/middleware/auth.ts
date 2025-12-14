@@ -5,6 +5,11 @@ export const authenticateApiKey = (
   res: Response,
   next: NextFunction,
 ) => {
+  // Skip authentication for OPTIONS preflight requests
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
+
   const apiKey = req.headers['x-api-key'] as string;
   const expectedKey = process.env.API_SECRET;
 
