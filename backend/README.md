@@ -1,13 +1,13 @@
 # Barber Booking System - Backend
 
-Express.js REST API for managing barber bookings with TypeScript and JSON storage.
+Express.js REST API for managing barber bookings with TypeScript and in-memory storage optimized for serverless deployment.
 
 ## Tech Stack
 
 - **Node.js** - JavaScript runtime
 - **Express 5** - Web framework
 - **TypeScript** - Type-safe development
-- **Axios** - HTTP client for external API
+- **Axios** - HTTP client for external barber API
 - **Helmet** - Security middleware
 - **CORS** - Cross-origin resource sharing
 
@@ -25,7 +25,7 @@ npm install
 npm run dev
 ```
 
-Server runs on http://localhost:3001
+Server runs on http://localhost:3001 with hot reload via nodemon.
 
 ### Production Build
 
@@ -36,7 +36,7 @@ npm start
 
 ## Environment Variables
 
-Create `.env`:
+Create `.env` in backend root:
 
 ```env
 PORT=3001
@@ -49,34 +49,32 @@ NODE_ENV=development
 ## Project Structure
 
 ```
-src/
-├── index.ts              # Express app setup
-├── middleware/
-│   └── auth.ts          # API key authentication
-├── routes/
-│   ├── barbers.ts       # Barber endpoints
-│   └── bookings.ts      # Booking endpoints
-├── services/
-│   ├── barberApi.ts     # External API client
-│   ├── bookingService.ts # Booking business logic
-│   └── dataService.ts   # JSON file operations
-├── types/
-│   └── index.ts         # TypeScript definitions
-└── data/
-    └── bookings.json    # Booking data storage
+backend/
+├── src/
+│   ├── index.ts              # Express app, CORS config, routes
+│   ├── middleware/
+│   │   └── auth.ts          # API key authentication
+│   ├── routes/
+│   │   ├── barbers.ts       # Barber endpoints
+│   │   └── bookings.ts      # Booking endpoints
+│   ├── services/
+│   │   ├── barberApi.ts     # External barber API client
+│   │   ├── bookingService.ts # Booking business logic
+│   │   └── dataService.ts   # In-memory storage (Map)
+│   └── types/
+│       └── index.ts         # TypeScript definitions
+├── vercel.json              # Vercel serverless config
+├── tsconfig.json
+└── package.json
 ```
 
 ## API Endpoints
 
-All endpoints require `X-API-Key` header.
+All endpoints require `X-API-Key` header with value matching `API_SECRET`.
 
-### Barbers
+### GET /api/barbers
 
-```
-GET /api/barbers
-```
-
-Fetches available barbers from external API.
+Fetch all available barbers from external API.
 
 **Response**:
 
@@ -94,11 +92,7 @@ Fetches available barbers from external API.
 }
 ```
 
-### Bookings
-
-```
-POST /api/bookings
-```
+### POST /api/bookings
 
 Create a new booking.
 
@@ -127,53 +121,100 @@ Create a new booking.
 }
 ```
 
-```
-GET /api/bookings/search?email=customer@example.com
-```
+### GET /api/bookings/search?email=customer@example.com
 
 Search bookings by customer email.
 
-```
-DELETE /api/bookings/:id
-```
+### DELETE /api/bookings/:id
 
 Delete a booking by ID.
 
+### GET /health
+
+Health check endpoint (no authentication required).
+
 ## Authentication
 
-All API requests must include the API key:
+All API requests must include the `X-API-Key` header:
 
 ```bash
 curl -H "X-API-Key: very-secret-key-for-internal-auth" \
   http://localhost:3001/api/barbers
 ```
 
+The auth middleware automatically skips OPTIONS preflight requests for CORS.
+
 ## Data Storage
 
-Bookings are stored in `data/bookings.json` as a simple JSON file. For production, consider using a proper database like PostgreSQL or MongoDB.
+Bookings are stored **in-memory** using a JavaScript `Map` for Vercel serverless compatibility.
 
-## Health Check
+⚠️ **Important**: Data persists only during the serverless function lifetime and will reset on:
 
+- Cold starts (function hasn't been called recently)
+- New deployments
+- Container restarts
+
+**For production**, integrate a persistent database:
+
+- **Vercel KV/Postgres** - Native Vercel integration
+- **Supabase** - PostgreSQL with real-time features
+- **MongoDB Atlas** - Document database
+- **PlanetScale** - MySQL-compatible serverless
+
+## Deployment
+
+### Vercel (Recommended)
+
+1. Install Vercel CLI:
+
+```bash
+npm i -g vercel
 ```
-GET /health
+
+2. Deploy:
+
+```bash
+vercel --prod
 ```
 
-Returns server status (no authentication required).
+3. Set environment variables in Vercel Dashboard:
+   - `API_SECRET`
+   - `BARBER_API_URL`
+   - `BARBER_API_KEY`
 
-## Scripts
+The `vercel.json` configures the Express app as a serverless function.
 
-- `npm run dev` - Start development server with nodemon
-- `npm run build` - Compile TypeScript to JavaScript
-- `npm start` - Run compiled production server
-
-## Docker
+### Docker
 
 ```bash
 docker build -t barber-booking-backend .
 docker run -p 3001:3001 --env-file .env barber-booking-backend
 ```
 
+## Scripts
+
+- `npm run dev` - Development with nodemon & ts-node
+- `npm run build` - Compile TypeScript to `dist/`
+- `npm start` - Run compiled production server
+
 ## Error Handling
+
+All endpoints return consistent error responses:
+
+```json
+{
+  "success": false,
+  "error": "Error message description"
+}
+```
+
+**Status codes**:
+
+- `200` - Success
+- `400` - Bad request / validation error
+- `401` - Unauthorized (missing/invalid API key)
+- `404` - Resource not found
+- `500` - Internal server error
 
 All endpoints return consistent error responses:
 
