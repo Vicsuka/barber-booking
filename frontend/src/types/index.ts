@@ -34,7 +34,6 @@ export interface Booking {
   customerEmail: string;
   dateTime: string; // ISO string
   createdAt: string;
-  status: 'confirmed' | 'cancelled';
 }
 
 export interface TimeSlot {

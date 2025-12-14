@@ -113,16 +113,6 @@ export const BookingResult: React.FC<BookingResultProps> = ({
               <Text fontWeight='bold'>Email:</Text>
               <Text>{result.booking.customerEmail}</Text>
             </HStack>
-            <HStack>
-              <Text fontWeight='bold'>Status:</Text>
-              <Badge
-                colorScheme='green'
-                fontSize='xs'
-                textTransform='capitalize'
-              >
-                {result.booking.status}
-              </Badge>
-            </HStack>
           </VStack>
         </Box>
       )}

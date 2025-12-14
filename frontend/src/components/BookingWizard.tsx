@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { VStack, Box, Container } from '@chakra-ui/react';
+import { VStack, Box } from '@chakra-ui/react';
 import { BarberSelection } from './BarberSelection';
 import { DatePicker } from './DatePicker';
 import { TimeSlotPicker } from './TimeSlotPicker';
@@ -41,58 +41,56 @@ export const BookingWizard: React.FC = () => {
   };
 
   return (
-    <Container maxW='6xl' px={{ base: 4, md: 6 }} py={{ base: 6, md: 8 }}>
-      <Box
-        bg={isDarkMode ? 'gray.800' : 'white'}
-        shadow='lg'
-        borderRadius='xl'
-        p={{ base: 4, md: 6 }}
-        borderWidth='1px'
-        borderColor={isDarkMode ? 'gray.600' : 'gray.200'}
-        transition='all 0.2s'
-      >
-        <VStack gap={{ base: 6, md: 8 }} align='stretch'>
-          {!bookingResult ? (
-            <>
-              <BarberSelection
-                onBarberSelect={setSelectedBarber}
-                selectedBarber={selectedBarber}
-              />
-
-              {selectedBarber && (
-                <DatePicker
-                  onDateSelect={setSelectedDate}
-                  selectedDate={selectedDate}
-                />
-              )}
-
-              {selectedBarber && selectedDate && (
-                <TimeSlotPicker
-                  selectedBarber={selectedBarber}
-                  selectedDate={selectedDate}
-                  onTimeSlotSelect={setSelectedTimeSlot}
-                  selectedTimeSlot={selectedTimeSlot}
-                />
-              )}
-
-              {selectedBarber && selectedDate && selectedTimeSlot && (
-                <BookingSummary
-                  selectedBarber={selectedBarber}
-                  selectedDate={selectedDate}
-                  selectedTimeSlot={selectedTimeSlot}
-                  onBookingComplete={handleBookingComplete}
-                />
-              )}
-            </>
-          ) : (
-            <BookingResult
-              result={bookingResult}
-              onStartNewBooking={handleStartNewBooking}
-              onTryAgain={handleTryAgain}
+    <Box
+      bg={isDarkMode ? 'gray.800' : 'white'}
+      shadow='lg'
+      borderRadius='xl'
+      p={{ base: 4, md: 6 }}
+      borderWidth='1px'
+      borderColor={isDarkMode ? 'gray.600' : 'gray.200'}
+      transition='all 0.2s'
+    >
+      <VStack gap={{ base: 6, md: 8 }} align='stretch'>
+        {!bookingResult ? (
+          <>
+            <BarberSelection
+              onBarberSelect={setSelectedBarber}
+              selectedBarber={selectedBarber}
             />
-          )}
-        </VStack>
-      </Box>
-    </Container>
+
+            {selectedBarber && (
+              <DatePicker
+                onDateSelect={setSelectedDate}
+                selectedDate={selectedDate}
+              />
+            )}
+
+            {selectedBarber && selectedDate && (
+              <TimeSlotPicker
+                selectedBarber={selectedBarber}
+                selectedDate={selectedDate}
+                onTimeSlotSelect={setSelectedTimeSlot}
+                selectedTimeSlot={selectedTimeSlot}
+              />
+            )}
+
+            {selectedBarber && selectedDate && selectedTimeSlot && (
+              <BookingSummary
+                selectedBarber={selectedBarber}
+                selectedDate={selectedDate}
+                selectedTimeSlot={selectedTimeSlot}
+                onBookingComplete={handleBookingComplete}
+              />
+            )}
+          </>
+        ) : (
+          <BookingResult
+            result={bookingResult}
+            onStartNewBooking={handleStartNewBooking}
+            onTryAgain={handleTryAgain}
+          />
+        )}
+      </VStack>
+    </Box>
   );
 };

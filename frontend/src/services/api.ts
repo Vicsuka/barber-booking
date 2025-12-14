@@ -59,6 +59,19 @@ class ApiService {
     });
     return this.makeRequest<Booking[]>(`/bookings?${params.toString()}`);
   }
+
+  async getBookingsByEmail(email: string): Promise<ApiResponse<Booking[]>> {
+    const params = new URLSearchParams({
+      email,
+    });
+    return this.makeRequest<Booking[]>(`/bookings?${params.toString()}`);
+  }
+
+  async deleteBooking(bookingId: string): Promise<ApiResponse<null>> {
+    return this.makeRequest<null>(`/bookings/${bookingId}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export const apiService = new ApiService();
