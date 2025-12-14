@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { authenticateApiKey } from './middleware/auth';
+import barbersRouter from './routes/barbers';
 
 dotenv.config();
 
@@ -23,12 +24,8 @@ app.get('/api/health', (req, res) => {
 });
 
 // Protected routes
-app.use('/api/barbers', authenticateApiKey);
+app.use('/api/barbers', authenticateApiKey, barbersRouter);
 app.use('/api/bookings', authenticateApiKey);
-
-app.get('/api/barbers', (req, res) => {
-  res.json({ success: true, message: 'Barbers endpoint - coming soon' });
-});
 
 app.get('/api/bookings', (req, res) => {
   res.json({ success: true, message: 'Bookings endpoint - coming soon' });
