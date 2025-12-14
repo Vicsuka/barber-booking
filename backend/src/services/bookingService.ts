@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { Booking, ApiResponse } from '../types';
 import { dataService } from './dataService';
 
@@ -49,7 +49,7 @@ class BookingService {
 
       // Create the booking
       const booking: Booking = {
-        id: uuidv4(),
+        id: randomUUID(),
         barberId: request.barberId,
         customerEmail: request.customerEmail.toLowerCase(),
         dateTime: request.dateTime,
