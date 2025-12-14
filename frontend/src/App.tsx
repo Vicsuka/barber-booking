@@ -1,6 +1,10 @@
-import React from 'react';
+import { useState } from 'react';
+import { BarberSelection } from './components/BarberSelection';
+import type { Barber } from './types';
 
 function App() {
+  const [selectedBarber, setSelectedBarber] = useState<Barber | null>(null);
+
   return (
     <div className='min-h-screen bg-gray-50'>
       <header className='bg-blue-600 text-white shadow-lg'>
@@ -14,22 +18,26 @@ function App() {
 
       <main className='container mx-auto px-4 py-8'>
         <div className='bg-white rounded-lg shadow-md p-6'>
-          <h2 className='text-2xl font-semibold text-gray-800 mb-4'>
-            Welcome to our Barber Shop
-          </h2>
-          <p className='text-gray-600 mb-6'>
-            Choose your barber, select a time slot, and book your appointment
-            online.
-          </p>
+          <BarberSelection
+            onBarberSelect={setSelectedBarber}
+            selectedBarber={selectedBarber}
+          />
 
-          <div className='flex space-x-4'>
-            <button className='bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors'>
-              Book Appointment
-            </button>
-            <button className='border border-blue-600 text-blue-600 px-6 py-2 rounded-md hover:bg-blue-50 transition-colors'>
-              View My Bookings
-            </button>
-          </div>
+          {selectedBarber && (
+            <div className='mt-8 pt-6 border-t'>
+              <h3 className='text-lg font-medium text-gray-800 mb-4'>
+                Next Steps
+              </h3>
+              <div className='flex space-x-4'>
+                <button className='bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors'>
+                  Select Date & Time
+                </button>
+                <button className='border border-blue-600 text-blue-600 px-6 py-2 rounded-md hover:bg-blue-50 transition-colors'>
+                  View My Bookings
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
