@@ -11,17 +11,25 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// CORS configuration
+const corsOptions = {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'X-API-Key', 'Authorization'],
+  credentials: true,
+};
+
 // Middleware
-app.use(helmet());
 app.use(
-  cors({
-    origin: '*', // Allow all origins for Vercel deployment
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'X-API-Key', 'Authorization'],
+  helmet({
+    crossOriginResourcePolicy: false, // Disable for API
   }),
 );
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// Handle OPTIONS preflight for all routes
+app.options('*', cors(corsOptions));
 
 app.get('/health', (req, res) => {
   res.json({
