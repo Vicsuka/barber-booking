@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { authenticateApiKey } from './middleware/auth';
 import barbersRouter from './routes/barbers';
+import bookingsRouter from './routes/bookings';
 
 dotenv.config();
 
@@ -25,11 +26,7 @@ app.get('/api/health', (req, res) => {
 
 // Protected routes
 app.use('/api/barbers', authenticateApiKey, barbersRouter);
-app.use('/api/bookings', authenticateApiKey);
-
-app.get('/api/bookings', (req, res) => {
-  res.json({ success: true, message: 'Bookings endpoint - coming soon' });
-});
+app.use('/api/bookings', authenticateApiKey, bookingsRouter);
 
 // Error handling
 app.use((req, res) => {
